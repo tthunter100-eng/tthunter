@@ -1,3 +1,32 @@
+//search button
+const searchButton = document.createElement("button");
+searchButton.innerText="🔍";
+Object.assign(searchButton.style, {
+    padding:"8px 20px",
+    color:"#000000",
+    backgroundColor:"#828282",
+    cursor:"pointer",
+    borderWidth:"2px",
+    borderStyle:"solid",
+    fontSize:"15px",
+    fontWeight:"normal",
+    display:"flex",
+    alignContent:"center",
+    textAlign:"center",
+    position:"absolute",
+    top:"-45px",
+    left:"10px",
+    margin:"0",
+    borderRadius:"8px",
+    boxShadow:"0 4px 8px rgba(0, 0, 0, 0.1)",
+});
+document.querySelector(".item-list-container").appendChild(searchButton);
+
+
+
+
+
+
 //edit button
 const editButton = document.createElement("button");
 editButton.innerText="Edit";
@@ -17,8 +46,12 @@ Object.assign(editButton.style, {
     top:"-40px",
     right:"0px",
     margin:"0",
+    borderRadius:"8px",
+    boxShadow:"0 4px 8px rgba(0, 0, 0, 0.1)",
 });
 document.querySelector(".item-list-container").appendChild(editButton);
+
+
 
 
 //button
@@ -76,6 +109,16 @@ popupLost.innerHTML = `
     <form action="placeholder.php" method="get" id="lost-query">
         <label for="itemname">Item Description</label><br>
         <input type="text" id="item-name" name="itemname" required><br><br>
+        <label for="itemtype">Item Type</label><br>
+        <select id="item-type" name="itemtype" required>
+            <option value="" disabled selected>Select item type</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Clothing">Clothing</option>
+            <option value="School Supplies">School Supplies</option>
+            <option value="Wallet">Wallet</option>
+            <option value="ID">ID</option>
+            <option value="Other">Other</option>
+        </select><br><br>
         <label for="itemdate">Date Received</label><br>
         <input type="date" id="item-date" name="itemdate" required>
         <button type="submit" id="submit-lost" style="position: absolute; bottom: 0%; right: 0%; transform: translate(-40%,-50%); background-color: #828282; border-width: 2px; border-style: solid; border-color: #000000; padding: 3px 20px; font-size: 14px; cursor: pointer;">Log</button>
@@ -114,6 +157,7 @@ popupLost.querySelector("#submit-lost").onclick = event => {
 
     const descInput = document.getElementById("item-name");
     const dateInput = document.getElementById("item-date");
+    const typeInput = document.getElementById("item-type");
     if (!descInput.checkValidity()) {
         descInput.reportValidity();
         return;
@@ -122,10 +166,14 @@ popupLost.querySelector("#submit-lost").onclick = event => {
         dateInput.reportValidity();
         return;
     }
+    if (!typeInput.checkValidity()) {
+        typeInput.reportValidity();
+        return;
+    }
 
 
     const newItem = document.createElement("li");
-    newItem.innerHTML = `<strong>${descInput.value}</strong> - <small>${dateInput.value}</small>`;
+    newItem.innerHTML = `<strong>${descInput.value}</strong> - <small>${dateInput.value}, ${typeInput.value}</small>`;
 
 
     const itemList = document.querySelector(".item-list");
@@ -420,6 +468,11 @@ ticketPage.innerHTML = `
                 Description: 
                 <textarea id="ItemDesc" style="margin-top: 5px; background-color: #d9d9d9; border-radius: 20px; border-width: 0px; height: 50px; width: 90%; padding: 10px; font-family: sans-serif;" required></textarea>
             </label>
+
+            <label style="display: flex; flex-direction: column;">
+                Item Brand (Optional): 
+                <input type="text" id="ItemBrand" style="margin-top: 5px; background-color: #d9d9d9; border-radius: 20px; border-width: 0px; height: 25px; width: 90%; padding: 3px 10px;">
+            </label>
             
             <label style="display: flex; flex-direction: column;">
                 Last Known Location: 
@@ -433,10 +486,47 @@ ticketPage.innerHTML = `
             </label>
 
             <label style="display: flex; flex-direction: column;">
+            Picture of the Item (Optional):
+            <input type="file" id="ItemPic" accept="image/*" style="margin-top: 5px; background-color: #d9d9d9; border-radius: 20px; border-width: 0px; height: 25px; width: 90%; padding: 3px 10px;">
+            </label>
+
+            <label style="display: flex; flex-direction: column; font-weight: bold; font-size: 18px;">
+            Personal Information:
+            </label>
+
+            <label style="display: flex; flex-direction: column;">
+            Full Name (Last name, First name MI.):
+            <input type="text" id="FullName" style="margin-top: 5px; background-color: #d9d9d9; border-radius: 20px; border-width: 0px; height: 25px; width: 90%; padding: 3px 10px;" required>
+            </label>
+
+            <label style="display: flex; flex-direction: column;">
+            Role in School:
+            <select id="Role" style="margin-top: 5px; background-color: #d9d9d9; border-radius: 20px; border-width: 0px; height: 30px; width: 90%; padding: 3px 10px;" required>
+                <option value="" disabled selected>Select your role</option>
+                <option value="Student">Student</option>
+                <option value="Professor">Professor</option>
+                <option value="Staff">Staff</option>
+                <option value="Other">Other</option>
+            </select>
+            </label>
+
+            <label style="display: flex; flex-direction: column;">
+            Student Number(if applicable):
+            <input type="text" id="StudentNum" style="margin-top: 5px; background-color: #d9d9d9; border-radius: 20px; border-width: 0px; height: 25px; width: 90%; padding: 3px 10px;">
+            </label>
+
+            <label style="display: flex; flex-direction: column;">
+            Contact Number:
+            <input type="tel" id="ContactNum" style="margin-top: 5px; background-color: #d9d9d9; border-radius: 20px; border-width: 0px; height: 25px; width: 90%; padding: 3px 10px;" required>
+            </label>
+
+            <label style="display: flex; flex-direction: column;">
             School ID for Verification:
             <input type="file" id="ItemID" accept="image/*" style="margin-top: 5px; background-color: #d9d9d9; border-radius: 20px; border-width: 0px; height: 25px; width: 90%; padding: 3px 10px;" required>
             </label>
-            
+
+
+
             <button type="submit" id="submit-ticket" style="background-color: #0668c0; color: white; border-radius: 20px; height: 50px; width: 150px; padding: 3px 10px; align-items: center; justify-content: center; color: white; border-color: #0668c0; cursor: pointer; transition: background 0.2s ease; font-size: 17px;">Submit Ticket</button>
         </form>
     </div>
