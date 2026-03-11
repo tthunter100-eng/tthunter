@@ -132,19 +132,18 @@ const filterAndHighlight = () => {
     items.forEach(item => {
         if (!item.dataset.original) item.dataset.original = item.innerHTML;
        
-        const rawText = item.innerText.toLowerCase();
+        // compute raw text excluding status badge
+        let rawText = item.innerText.toLowerCase();
+        const badge = item.querySelector('.status-badge');
+        if (badge) {
+            rawText = rawText.replace(badge.innerText.toLowerCase(), '');
+        }
         const matchesCategory = category === "All" || rawText.includes(category.toLowerCase());
         const matchesQuery = rawText.includes(query);
 
-
         if (matchesCategory && matchesQuery) {
             item.style.display = "block";
-            if (query !== "") {
-                const regex = new RegExp(`(${query})`, "gi");
-                item.innerHTML = item.dataset.original.replace(regex, `<mark style="background-color: #3be8ff; padding: 0 2px; border-radius: 2px;">$1</mark>`);
-            } else {
-                item.innerHTML = item.dataset.original;
-            }
+            item.innerHTML = item.dataset.original;
         } else {
             item.style.display = "none";
         }
@@ -204,7 +203,7 @@ popupLost.innerHTML = `
         <form action="placeholder.php" method="get" id="lost-query">
             <label for="itemname">Item Description</label><br>
             <input type="text" id="item-name" name="itemname" style="padding: 5px 5px; height: 20px; width: 95%; background-color: #d9d9d9; color: black; border-radius: 20px; border: none;" required><br><br>
-            <label for="personname">Surrenderer:</label><br>
+            <label for="personname">Surrendered by:</label><br>
             <input type="text" id="person-name" name="personname" style="padding: 5px 5px; height: 20px; width: 95%; background-color: #d9d9d9; color: black; border-radius: 20px; border: none;" required><br><br>
             <label for="itemtype">Item Type</label><br>
             <select id="item-type" name="itemtype" style="border-radius: 20px; border-color: #0668c0; padding: 5px 5px; height: 30px; width: auto; align-items: center;" required>
@@ -293,7 +292,13 @@ popupLost.querySelector("#submit-lost").onclick = event => {
     };
     warning.querySelector("#proceed-delete").onclick = event => {
         if (deleteItem) {
+            const id = deleteItem.dataset.id;
             deleteItem.remove();
+            // also remove from logbook if present
+            if (id) {
+                const logEntry = document.querySelector(`#logbook-list li[data-id="${id}"]`);
+                if (logEntry) logEntry.remove();
+            }
             deleteItem = null;
         }
         warning.style.display = "none";
@@ -301,16 +306,112 @@ popupLost.querySelector("#submit-lost").onclick = event => {
 
     };
 
-    //item logging
+    // item logging with status
     const newItem = document.createElement("li");
+    const entryId = Date.now().toString();
+    newItem.dataset.id = entryId;
     Object.assign(newItem.style, {
         padding: "5px 0",
         position: "relative",
         listStyle: "none",
     });
-    newItem.innerHTML = `<strong>${descInput.value}</strong> - <small>${dateInput.value}, ${typeInput.value}</small>
-    <button class="deleteButton" style="cursor: pointer; right: 5px; top: 50%; transform: translateY(-50%); padding: 2px 2px; position: absolute; display: block; background-color: red; color: white; border-width: 3px; border: red; border-radius: 8px; height: 27px; width: 30px;">
-        <img class="delete-icon" src="delete icon.png" style="object-fit: contain; height: 100%; width: 100%;"></button>`;
+    newItem.innerHTML = `
+        <strong>${descInput.value}</strong> - <small>${dateInput.value}, ${typeInput.value}</small>
+        <span class="status-badge" style="margin-left:10px; padding:2px 8px; border-radius:4px; background:green; color:#fff; cursor:pointer; font-size:12px; position:relative;">to receive</span>
+        <ul class="status-dropdown" style="display:none; position:absolute; top:120%; left:0; background:#fff; border:1px solid #ccc; list-style:none; padding:0; margin:0; z-index:1000; min-width:80px;">
+            <li style="padding:5px; cursor:pointer;">to receive</li>
+            <li style="padding:5px; cursor:pointer;">received</li>
+        </ul>
+        <button class="deleteButton" style="cursor: pointer; right: 5px; top: 50%; transform: translateY(-50%); padding: 2px 2px; position: absolute; display: block; background-color: red; color: white; border-width: 3px; border: red; border-radius: 8px; height: 27px; width: 30px;">
+            <img class="delete-icon" src="delete icon.png" style="object-fit: contain; height: 100%; width: 100%;"></button>
+    `;
+    // status logic
+    const badge = newItem.querySelector('.status-badge');
+    const dropdown = newItem.querySelector('.status-dropdown');
+    badge.onclick = e => {
+        e.stopPropagation();
+        dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
+        dropdown.style.flexDirection = 'column';
+    };
+    dropdown.querySelectorAll('li').forEach(li => {
+        li.onclick = e => {
+            const val = li.textContent;
+            if (val === 'received') {
+                // show warning for status change to received
+                const statusWarning = document.createElement("div");
+                statusWarning.innerHTML = `
+                    <div style="padding: 20px 40px; text-align: center; align-content: center; justify-content: center; position: fixed; display: flex; flex-direction: column; border-radius: 20px; background-color: white; color: black; font-weight: bold; font-size: 24px; top: 50%; left: 50%; transform: translate(-50%, -50%); height: auto; min-height: 30%; width: 80%; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);">
+                        Changing to this status removes it from the catalogue, but will remain logged in the logbook.<br>
+                        <div style="display: flex; flex-direction: row; gap: 50px; margin-top: 30px; justify-content: center; position: relative; background: none; padding: 10px 20px; width: 100%">
+                            <button id="cancel-status" style="cursor: pointer; display: flex; padding: 8px 20px; color: black; background-color: gray; font-size: 20px; border: none; border-radius: 8px;">Cancel</button>
+                            <button id="confirm-status" style="cursor: pointer; display: flex; padding: 8px 20px; color: white; background-color: blue; font-size: 20px; border: none; border-radius: 8px;">I understand</button>
+                        </div>
+                    </div>
+                `;
+                Object.assign(statusWarning.style, {
+                    position: "fixed",
+                    top: "0",
+                    left: "0",
+                    width: "100vw",
+                    height: "100vh",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    zIndex: "3000"
+                });
+                document.body.appendChild(statusWarning);
+                document.body.style.overflow = "hidden";
+
+                statusWarning.querySelector("#cancel-status").onclick = () => {
+                    statusWarning.remove();
+                    document.body.style.overflow = "auto";
+                };
+                statusWarning.querySelector("#confirm-status").onclick = () => {
+                    // apply status change
+                    badge.textContent = val;
+                    badge.style.background = 'blue';
+                    // sync to logbook
+                    const id = newItem.dataset.id;
+                    if (id) {
+                        const logEntry = document.querySelector(`#logbook-list li[data-id="${id}"]`);
+                        if (logEntry) {
+                            const logBadge = logEntry.querySelector('.status-badge');
+                            if (logBadge) {
+                                logBadge.textContent = val;
+                                logBadge.style.background = 'blue';
+                            }
+                        }
+                    }
+                    // remove from catalogue
+                    newItem.remove();
+                    statusWarning.remove();
+                    document.body.style.overflow = "auto";
+                };
+            } else {
+                // normal status change for 'to receive'
+                badge.textContent = val;
+                badge.style.background = 'green';
+                // sync to logbook
+                const id = newItem.dataset.id;
+                if (id) {
+                    const logEntry = document.querySelector(`#logbook-list li[data-id="${id}"]`);
+                    if (logEntry) {
+                        const logBadge = logEntry.querySelector('.status-badge');
+                        if (logBadge) {
+                            logBadge.textContent = val;
+                            logBadge.style.background = 'green';
+                        }
+                    }
+                }
+            }
+            dropdown.style.display = 'none';
+        };
+    });
+    // close dropdown when clicking outside
+    document.addEventListener('click', () => {
+        dropdown.style.display = 'none';
+    });
     newItem.querySelector(".deleteButton").onclick = event => {
         deleteItem = newItem;
         warning.style.display = "flex";
@@ -319,6 +420,17 @@ popupLost.querySelector("#submit-lost").onclick = event => {
 
     const itemList = document.querySelector(".item-list");
     itemList.appendChild(newItem);
+
+    // also mirror to logbook list
+    const logbookList = document.getElementById('logbook-list');
+    if (logbookList) {
+        const logItem = newItem.cloneNode(true);
+        // remove delete button from logbook entry
+        const del = logItem.querySelector('.deleteButton');
+        if (del) del.remove();
+        logItem.dataset.id = entryId;
+        logbookList.appendChild(logItem);
+    }
 
     document.getElementById("lost-query").reset();
     popupLost.style.display = "none";
@@ -561,7 +673,6 @@ loginPage.querySelector("#submit-login").onclick = event => {
     document.body.style.overflow = "auto";
     dropdownPopup.style.display = "none";
 };
-
 //for submit ticket
 const submitTicket = document.getElementById("ticket-button");
 const ticketPage = document.createElement("div");
@@ -675,6 +786,141 @@ ticketOut.onmouseleave = () => {
     ticketOut.style.fontSize = "24px";
 };
 
+
+let submittedTickets = [];
+const itemListContainerMain = document.querySelector(".item-list-container");
+
+// ticket inbox container
+const ticketInboxContainer = document.createElement("div");
+
+
+ticketInboxContainer.className = "item-list-container ticket-inbox-container";
+Object.assign(ticketInboxContainer.style, {
+    
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    minHeight: "100vh",
+    position: "relative"
+});
+// hide initially
+ticketInboxContainer.style.display = "none";
+ticketInboxContainer.innerHTML = `
+    <h2>Ticket Inbox</h2>
+    <button id="back-to-logbook" style="padding: 8px 20px; background-color: #828282; color: #000000; border: 2px solid #000000; border-radius: 8px; cursor: pointer; font-weight: bold; position:absolute; top:20px; right:20px;">Back to Item Catalogue</button>
+    <ul id="tickets-list" class="item-list" style="margin-top:40px; width:100%;"></ul>
+`;
+
+// logbook container
+const logbookContainer = document.createElement("div");
+logbookContainer.className = "item-list-container logbook-container";
+Object.assign(logbookContainer.style, {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    minHeight: "100vh",
+    position: "relative"
+});
+logbookContainer.style.display = "none";
+logbookContainer.innerHTML = `
+    <h2>Logbook</h2>
+    <button id="back-from-logbook" style="padding: 8px 20px; background-color: #828282; color: #000000; border: 2px solid #000000; border-radius: 8px; cursor: pointer; font-weight: bold; position:absolute; top:20px; right:20px;">Back to Item Catalogue</button>
+    <ul id="logbook-list" class="item-list" style="margin-top:40px; width:100%;"></ul>
+`;
+
+const mainContent = document.querySelector('.main-content');
+if (mainContent) {
+    mainContent.appendChild(ticketInboxContainer);
+    mainContent.appendChild(logbookContainer);
+} else {
+    document.body.appendChild(ticketInboxContainer);
+    document.body.appendChild(logbookContainer);
+}
+
+function addTicketToInbox(ticket) {
+    const ticketsList = document.getElementById("tickets-list");
+    const li = document.createElement("li");
+    li.innerHTML = `
+        <div style="font-weight:bold; font-size:18px; color:#0668c0; margin-bottom:8px;">${ticket.itemName}</div>
+        <div><strong>Description:</strong> ${ticket.itemDesc}</div>
+        <div><strong>Brand:</strong> ${ticket.itemBrand || 'N/A'}</div>
+        <div><strong>Last Location:</strong> ${ticket.itemLoc}</div>
+        <div><strong>Date Lost:</strong> ${ticket.itemDate}</div>
+        <div><strong>Claimant:</strong> ${ticket.fullName} (${ticket.role})</div>
+        <div><strong>Contact:</strong> ${ticket.contactNum}</div>
+        <div><strong>Student ID:</strong> ${ticket.studentNum || 'N/A'}</div>
+        <div><strong>Submitted:</strong> ${ticket.submittedDate}</div>
+        <div style="position:absolute; top:10px; right:10px;"><span style="padding:5px 10px; background:#acfc79; border-radius:5px; font-size:12px;">${ticket.status}</span></div>
+    `;
+    ticketsList.appendChild(li);
+}
+
+
+ticketPage.querySelector("#submit-ticket").onclick = event => {
+    event.preventDefault();
+
+    const itemName = document.getElementById("ItemName");
+    const itemDesc = document.getElementById("ItemDesc");
+    const itemBrand = document.getElementById("ItemBrand");
+    const itemLoc = document.getElementById("ItemLoc");
+    const itemDate = document.getElementById("ItemDate");
+    const fullName = document.getElementById("FullName");
+    const role = document.getElementById("Role");
+    const studentNum = document.getElementById("StudentNum");
+    const contactNum = document.getElementById("ContactNum");
+    const itemID = document.getElementById("ItemID");
+
+    if (!itemName.checkValidity() || !itemDesc.checkValidity() || !itemLoc.checkValidity() || 
+        !itemDate.checkValidity() || !fullName.checkValidity() || !role.checkValidity() || !contactNum.checkValidity() || !itemID.checkValidity()) {
+        itemName.reportValidity() || itemDesc.reportValidity() || itemLoc.reportValidity() || 
+        itemDate.reportValidity() || fullName.reportValidity() || role.reportValidity() || contactNum.reportValidity() || itemID.reportValidity();
+        return;
+    }
+
+  
+    const ticket = {
+        id: Date.now(),
+        itemName: itemName.value,
+        itemDesc: itemDesc.value,
+        itemBrand: itemBrand.value,
+        itemLoc: itemLoc.value,
+        itemDate: itemDate.value,
+        fullName: fullName.value,
+        role: role.value,
+        studentNum: studentNum.value,
+        contactNum: contactNum.value,
+        submittedDate: new Date().toLocaleDateString(),
+        status: "Pending"
+    };
+
+
+    submittedTickets.push(ticket);
+
+    addTicketToInbox(ticket);
+
+  
+    document.getElementById("ticket-form").reset();
+    ticketPage.style.display = "none";
+    document.body.style.overflow = "auto";
+};
+
+
+document.getElementById("back-to-logbook").onclick = () => {
+    ticketInboxContainer.style.display = "none";
+    logbookContainer.style.display = "none";
+    itemListContainerMain.style.display = "block";
+};
+
+// back from logbook
+if (document.getElementById("back-from-logbook")) {
+    document.getElementById("back-from-logbook").onclick = () => {
+        logbookContainer.style.display = "none";
+        itemListContainerMain.style.display = "block";
+    };
+}
+
 // Sidebar shiiiii
 const sidebarTrigger = document.createElement("div");
 Object.assign(sidebarTrigger.style, {
@@ -690,11 +936,16 @@ Object.assign(sidebarTrigger.style, {
 document.body.appendChild(sidebarTrigger);
 
 const sidebar = document.createElement("div");
-sidebar.innerHTML = "<p>Sidebar</p>";
+sidebar.innerHTML = `
+    <div style="font-weight: bold; font-size: 18px; margin-bottom: 20px; color: #333;">Admin Pages</div>
+    <button id="sidebar-logbook" style="width: 100%; padding: 10px; margin-bottom: 10px; background-color: #0668c0; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px;">Logbook</button>
+    <button id="sidebar-ticket" style="width: 100%; padding: 10px; margin-bottom: 10px; background-color: #0668c0; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px;">Ticket inbox</button>
+    <button id="sidebar-catalogue" style="width: 100%; padding: 10px; margin-bottom: 10px; background-color: #0668c0; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px;">Item Catalogue</button>
+`;
 sidebar.style.position = "fixed";
-sidebar.style.left = "-700px";
+sidebar.style.left = "-200px";
 sidebar.style.top = "0";
-sidebar.style.width = "700px";
+sidebar.style.width = "200px";
 sidebar.style.height = "100%";
 sidebar.style.backgroundColor = "lightgray";
 sidebar.style.transition = "left 0.3s";
@@ -713,11 +964,44 @@ sidebar.addEventListener("mouseenter", () => {
 });
 sidebarTrigger.addEventListener("mouseleave", () => {
     sidebarTimeout = setTimeout(() => {
-        sidebar.style.left = "-700px";
+        sidebar.style.left = "-200px";
     }, 300);
 });
 sidebar.addEventListener("mouseleave", () => {
     sidebarTimeout = setTimeout(() => {
-        sidebar.style.left = "-700px";
+        sidebar.style.left = "-200px";
     }, 300);
 });
+
+// Sidebar buttons BABEYYYYY
+// Logbook
+const logbookBtn = document.getElementById('sidebar-logbook');
+if (logbookBtn) {
+    logbookBtn.onclick = () => {
+        itemListContainerMain.style.display = "none";
+        ticketInboxContainer.style.display = "none";
+        logbookContainer.style.display = "block";
+        sidebar.style.left = "-200px";
+    };
+}
+
+// Ticket Inbox
+const ticketBtn = document.getElementById('sidebar-ticket');
+if (ticketBtn) {
+    ticketBtn.onclick = () => {
+        itemListContainerMain.style.display = "none";
+        ticketInboxContainer.style.display = "block";
+        sidebar.style.left = "-200px";
+    };
+}
+
+// Item catalogue
+const catalogueBtn = document.getElementById('sidebar-catalogue');
+if (catalogueBtn) {
+    catalogueBtn.onclick = () => {
+        ticketInboxContainer.style.display = "none";
+        logbookContainer.style.display = "none";
+        itemListContainerMain.style.display = "block";
+        sidebar.style.left = "-200px";
+    };
+}
