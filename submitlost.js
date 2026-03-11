@@ -171,7 +171,7 @@ clearBtn.onclick = () => {
 
 //for edit button
 let isEditing=false;
-const allDeleteButtons = querySelectorAll(".deleteButton");
+const allDeleteButtons = document.querySelectorAll(".deleteButton");
 editButton.onclick = () => {
     isEditing=!isEditing;
     if (isEditing) {
@@ -927,6 +927,7 @@ sidebar.addEventListener("mouseleave", () => {
         sidebar.style.left = "-700px";
     }, 300);
 });
+
 
 
 
