@@ -241,6 +241,7 @@ popupLost.querySelector("#close-lost").onclick = () => {
 
 const warning = document.createElement("div");
 document.body.appendChild(warning);
+let deleteItem = null;
 
 popupLost.querySelector("#submit-lost").onclick = event => {
     event.preventDefault();
@@ -278,11 +279,16 @@ popupLost.querySelector("#submit-lost").onclick = event => {
     warning.querySelector("#close-delete").onclick = event => {
         warning.style.display = "none";
         document.body.style.overflow = "auto";
+        deleteItem = null;
     };
     warning.querySelector("#proceed-delete").onclick = event => {
+        if (deleteItem) {
+            deleteItem.remove();
+            deleteItem = null;
+        }
         warning.style.display = "none";
         document.body.style.overflow = "auto";
-        newItem.remove();
+
     };
 
     //item logging
@@ -293,8 +299,10 @@ popupLost.querySelector("#submit-lost").onclick = event => {
         listStyle: "none",
     });
     newItem.innerHTML = `<strong>${descInput.value}</strong> - <small>${dateInput.value}, ${typeInput.value}</small>
-    <button class="deleteButton" style="cursor: pointer; right: 10px; top: 50%; transform: translateY(-50%); padding: 2px 8px; position: absolute; display: block; background-color: red; color: white; border-width: 3px; border: red; border-radius: 8px; font-weight: bold; font-size: 18px;">X</button>`;
+    <button class="deleteButton" style="cursor: pointer; right: 5px; top: 50%; transform: translateY(-50%); padding: 2px 2px; position: absolute; display: block; background-color: red; color: white; border-width: 3px; border: red; border-radius: 8px; height: 27px; width: 30px;">
+        <img class="delete-icon" src="delete icon.png" style="object-fit: contain; height: 100%; width: 100%;"></button>`;
     newItem.querySelector(".deleteButton").onclick = event => {
+        deleteItem = newItem;
         warning.style.display = "flex";
         document.body.style.overflow = "hidden";
     };
@@ -687,3 +695,26 @@ sidebar.addEventListener("mouseleave", () => {
         sidebar.style.left = "-700px";
     }, 300);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
