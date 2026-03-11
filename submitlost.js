@@ -193,25 +193,32 @@ editButton.onclick = () => {
 //popup
 const popupLost = document.createElement("div");
 popupLost.innerHTML = `
-<div style="position: fixed; border-radius: 8px; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; height: 70%; background-color: white; display: flex; justify-content: center; align-items: center; z-index: 2000;">
-    <form action="placeholder.php" method="get" id="lost-query">
-        <label for="itemname">Item Description</label><br>
-        <input type="text" id="item-name" name="itemname" required><br><br>
-        <label for="itemtype">Item Type</label><br>
-        <select id="item-type" name="itemtype" required>
-            <option value="" disabled selected>Select item type</option>
-            <option value="Electronics">Electronics</option>
-            <option value="Clothing">Clothing</option>
-            <option value="School Supplies">School Supplies</option>
-            <option value="Wallet">Wallet</option>
-            <option value="ID">ID</option>
-            <option value="Other">Other</option>
-        </select><br><br>
-        <label for="itemdate">Date Received</label><br>
-        <input type="date" id="item-date" name="itemdate" required>
-        <button type="submit" id="submit-lost" style="position: absolute; bottom: 0%; right: 0%; transform: translate(-40%,-50%); background-color: #828282; border-width: 2px; border-style: solid; border-color: #000000; padding: 5px 20px; font-size: 15px; cursor: pointer;">Log</button>
-    </form><br><br>
-    <button id="close-lost" style="position: absolute; top: 10px; right: 10px; background: none; border: none; cursor: pointer;">X</button>
+<div style="position: fixed; border-radius: 20px; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; height: 70%; display: flex; flex-direction: column; background-color: white; z-index: 2000; overflow: hidden; gap: 15px;">
+    <div style="background-color: #0668c0; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; padding: 10px; position: relative;">
+        <button id="close-lost" style="position: absolute; left: 15px; background: none; border: none; cursor: pointer; font-weight: bold; font-size: 24px; color: white;">←</button>
+        What and when was this item surrendered?
+    </div>
+    <div style="position: relative; display: flex; flex-direction: column; background: none; gap: 20px; margin-left: 30px; margin-top: 20px; align-items: left;">
+        <form action="placeholder.php" method="get" id="lost-query">
+            <label for="itemname">Item Description</label><br>
+            <input type="text" id="item-name" name="itemname" style="padding: 5px 5px; height: 20px; width: 95%; background-color: #d9d9d9; color: black; border-radius: 20px; border: none;" required><br><br>
+            <label for="personname">Surrenderer:</label><br>
+            <input type="text" id="person-name" name="personname" style="padding: 5px 5px; height: 20px; width: 95%; background-color: #d9d9d9; color: black; border-radius: 20px; border: none;" required><br><br>
+            <label for="itemtype">Item Type</label><br>
+            <select id="item-type" name="itemtype" style="border-radius: 20px; border-color: #0668c0; padding: 5px 5px; height: 30px; width: auto; align-items: center;" required>
+                <option value="" disabled selected>Select item type</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Clothing">Clothing</option>
+                <option value="School Supplies">School Supplies</option>
+                <option value="Wallet">Wallet</option>
+                <option value="ID">ID</option>
+                <option value="Other">Other</option>
+            </select><br><br>
+            <label for="itemdate">Date Received</label><br>
+            <input type="date" id="item-date" name="itemdate" style="background-color: white; border-radius: 20px; border-color: #0668c0; height: 20px; width: auto; padding: 5px 5px;" required>
+            <button type="submit" id="submit-lost" style="position: absolute; bottom: 0%; right: 0%; transform: translate(-40%,-50%); background-color: #828282; border-width: 2px; border-style: solid; border-color: #000000; padding: 5px 20px; font-size: 15px; cursor: pointer;">Log</button>
+        </form>
+    </div>
 </div>`;
 
 
@@ -248,11 +255,12 @@ popupLost.querySelector("#submit-lost").onclick = event => {
 
 
     const descInput = document.getElementById("item-name");
+    const nameInput = document.getElementById("person-name");
     const dateInput = document.getElementById("item-date");
     const typeInput = document.getElementById("item-type");
    
-    if (!descInput.checkValidity() || !dateInput.checkValidity() || !typeInput.checkValidity()) {
-        descInput.reportValidity() || dateInput.reportValidity() || typeInput.reportValidity();
+    if (!descInput.checkValidity() || !dateInput.checkValidity() || !typeInput.checkValidity() || !nameInput.checkValidity()) {
+        descInput.reportValidity() || dateInput.reportValidity() || typeInput.reportValidity() || nameInput.reportValidity();
         return;
     }
 
@@ -376,10 +384,15 @@ window.addEventListener('keydown', event => {
     if (event.key === "Enter") {
         if (popupLost.style.display === "flex") {
             const descInput = document.getElementById("item-name");
+            const nameInput = document.getElementById("person-name");
             const dateInput = document.getElementById("item-date");
             const submitBtn = document.getElementById("submit-lost");
 
             if (document.activeElement === descInput) {
+                event.preventDefault();
+                nameInput.focus();
+            }
+            else if (document.activeElement === nameInput) {
                 event.preventDefault();
                 dateInput.focus();
             }
@@ -628,11 +641,22 @@ Object.assign(ticketPage.style, {
 });
 document.body.appendChild(ticketPage);
 const ticketOut = document.getElementById("close-ticket");
+const lostOut = document.getElementById("close-lost");
 
 //show submit ticket page
 submitTicket.onclick = () => {
     ticketPage.style.display = "flex";
     document.body.style.overflow = "hidden";
+};
+
+//close add item
+lostOut.onmouseenter = () => {
+    lostOut.innerText = "Close";
+    lostOut.style.fontSize = "20px";
+};
+lostOut.onmouseleave = () => {
+    lostOut.innerText = "←";
+    lostOut.style.fontSize = "24px";
 };
 
 //close submit ticket page
@@ -695,26 +719,3 @@ sidebar.addEventListener("mouseleave", () => {
         sidebar.style.left = "-700px";
     }, 300);
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
