@@ -177,13 +177,16 @@ editButton.onclick = () => {
         editButton.innerText="Done";
         editButton.style.backgroundColor="#acfc79";
         editButton.style.borderWidth="0px";
+        deleteButton.style.display="flex";
         lostButton.style.display="flex";
+        
     }
     else {
         editButton.innerText="Edit";
         editButton.style.color="#000000";
         editButton.style.backgroundColor="#828282";
         editButton.style.borderWidth="2px";
+        deleteButton.style.display="none";
         lostButton.style.display="none";
     }
 };
@@ -256,7 +259,7 @@ popupLost.querySelector("#submit-lost").onclick = event => {
     const newItem = document.createElement("li");
     newItem.style.padding = "5px 0";
     newItem.innerHTML = `<strong>${descInput.value}</strong> - <small>${dateInput.value}, ${typeInput.value}</small>
-    <button class="deleteButton" style="position: absolute; right: 0; display: none; background: red; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">X</button>`;
+    <button id="deleteButton" style="padding: 2px 8px; position: absolute; right: 0; display: none; background: red; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">X</button>`;
     newItem.querySelector(".deleteButton").onclick = () => remove.newItem();
 
 
@@ -923,6 +926,7 @@ sidebar.addEventListener("mouseleave", () => {
         sidebar.style.left = "-700px";
     }, 300);
 });
+
 
 
 
