@@ -30,7 +30,7 @@ Object.assign(searchButton.style, {
 document.querySelector(".item-list-container").appendChild(searchButton);
 
 
-//search buton pop-up
+//search button pop-up
 const searchContainer = document.createElement("div");
 searchContainer.innerHTML = `
     <select id="search-category" style="padding: 6px; border-radius: 8px; border: 1px solid #ccc; cursor: pointer; font-size: 13px;">
@@ -51,9 +51,13 @@ searchContainer.innerHTML = `
 
 Object.assign(searchContainer.style, {
     position: "absolute",
-    top: "-50px",
+    top: "-55px",
     left: "85px",
-    display: "none",
+    display: "flex",
+    opacity: "0",
+    transform: "translateX(-20px)",
+    transition: "all 0.1s ease-out",
+    pointerEvents: "none",
     gap: "8px",
     alignItems: "center",
     backgroundColor: "#ffffff",
@@ -153,7 +157,17 @@ const filterAndHighlight = () => {
 
 searchButton.onclick = () => {
     isSearchOpen = !isSearchOpen;
-    searchContainer.style.display = isSearchOpen ? "flex" : "none";
+
+    if (isSearchOpen) {
+        searchContainer.style.opacity = "1";
+        searchContainer.style.transform = "translateX(0)";
+        searchContainer.style.pointerEvents = "auto";
+    }
+    else {
+        searchContainer.style.opacity = "0";
+        searchContainer.style.transform = "translateX(-20px)";
+        searchContainer.style.pointerEvents = "none";
+    }
 };
 
 
@@ -477,21 +491,37 @@ Object.assign(dropdownPopup.style, {
     top: "110%",
     right: "50px",
     color: "#fff",
-    display: "none",
+    opacity: "0",
+    transform: "translateY(-10px)",
+    transition: "all 0.1s ease-out",
     position: "absolute",
     zIndex: "2000",
+    PointerEvents: "none",
+    display: "flex"
 });
 document.querySelector(".header").appendChild(dropdownPopup);
 
 let isDown = false;
 dropdown.onclick = event => {
     isDown=!isDown;
-    dropdownPopup.style.display=isDown ? "flex" : "none";
+
+    if (isDown) {
+        dropdownPopup.style.opacity = "1";
+        dropdownPopup.style.transform = "translateY(0)";
+        dropdownPopup.style.pointerEvents = "auto";
+    }
+    else {
+        dropdownPopup.style.opacity = "0";
+        dropdownPopup.style.transform = "translateY(-10px)";
+        dropdownPopup.style.pointerEvents = "none";
+    }
 };
 window.addEventListener('click', event => {
     if (isDown && event.target !== dropdown && !dropdownPopup.contains(event.target) && !loginPage.contains(event.target)) {
         isDown = false;
-        dropdownPopup.style.display = "none";
+        dropdownPopup.style.opacity = "0";
+        dropdownPopup.style.transform = "translateY(-10px)";
+        dropdownPopup.style.pointerEvents = "none";
     }
 });
 window.addEventListener('keydown', event => {
