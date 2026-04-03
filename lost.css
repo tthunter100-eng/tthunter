@@ -14,7 +14,6 @@ body::before {
     left: 0;
     height: 100%;
     width: 100%;
-    filter: blur(1px);
     opacity: 0.8;
     z-index: -1;
     transform: scale(1.1);
@@ -26,7 +25,6 @@ body::before {
 }
 
 .header {
-    background-color: #000;
     color: #fff;
     font-size: 20px;
     padding: 10px 20px;
@@ -62,17 +60,24 @@ body::before {
 }
 
 .header-titles h1 {
-    font-size: 13px;
-    font-weight: normal;
+    font-size: 14px;
+    font-weight: bold;
     margin: 0;
-    line-height: 1.2;
+    line-height: 1.1;
 }
 
 .header-titles h2 {
-    font-size: 30px;
+    font-size: 24px;
     font-weight: bold;
     margin: 0;
-    line-height: 1.2;
+    line-height: 1.1;
+}
+
+.header-titles h3 {
+    font-size: 15px;
+    font-weight: bold;
+    margin: 0;
+    line-height: 1.1;
 }
 
 .button-line {
@@ -120,16 +125,43 @@ body::before {
 
 
 
+@property --grad-color-1 {
+    syntax: '<color>';
+    initial-value: black;
+    inherits: false;
+}
+
+
+
+
+@property --grad-color-2 {
+    syntax: '<color>';
+    initial-value: blue;
+    inherits: false;
+}
+
+
+
+
 .create-ticket-btn {
-    background-color: #000;
-    color: rgb(167, 167, 167);
+    background: linear-gradient(to right, var(--grad-color-1), var(--grad-color-2));
+    color: white;
+    cursor: pointer;
+    height: 35px;
+    width: 150px;
+    padding: 2px 4px;
+    border-radius: 20px;
+    border: none;
+    transition: transform 0.2s ease, --grad-color-1 0.5s ease, --grad-color-2 0.5s ease;
 }
 
 
 
 
 .create-ticket-btn:hover {
-    background-color: #0056b3;
+    --grad-color-1: blue;
+    --grad-color-2: black;
+    transform: scale(1.5);
     color: white;
 }
 
@@ -224,4 +256,3 @@ body::before {
 .item-list li:hover {
     background-color: #e9e9e9;
 }
-
