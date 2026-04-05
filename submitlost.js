@@ -1,93 +1,130 @@
-    //search button
-const searchButton = document.createElement("button");
-const searchIcon = document.createElement("img");
-searchIcon.src = "SearchIco.png";
-searchIcon.style.width = "30px";      
-searchIcon.style.height = "30px";
-
-
-searchButton.appendChild(searchIcon);
-
-
-Object.assign(searchButton.style, {
-    padding:"8px 20px",
-    color:"#000000",
-    cursor:"pointer",
-    borderWidth:"2px",
-    borderStyle:"solid",
-    fontSize:"15px",
-    fontWeight:"normal",
-    position:"absolute",
-    top:"-60px",
-    left:"5px",
-    margin:"0",
-    borderRadius:"8px", 
-    boxShadow:"0 4px 8px rgba(0, 0, 0, 0.1)",
-    display: "none", //tago muna wait lang
-    alignItems: "center",
-    justifyContent: "center"
-});
-document.querySelector(".item-list-container").appendChild(searchButton);
-
 //submit a ticket div
 const lostSomething = document.createElement("div");
 lostSomething.innerHTML = `
 <h style="font-size: 50px; font-weight: bold; margin: 0; line-height: 1;">Lost Something?<br>We Got You.</h><br>
 <h style="font-size: 20px; font-weight: normal; margin: 0; line-height: 1.1;">Browse surrendered items and claim what's yours.</h><br>
-<div style="height: 50px; width: 200px; top: 25px; display: flex; position: relative;">
-    <button class="create-ticket-btn" id="ticket-button" style="display: flex; flex-direction: row; padding: 5px 15px; gap: 5px; align-items: center;">
+<div style="height: 60px; width: 200px; top: 35px; display: flex; position: relative;">
+    <button class="create-ticket-btn" id="ticket-button">
     <img src="submitticket.png" style="position: relative; height: 95%; width: 20%;" alt="icon" class="submit-ticket-icon">
     <span>Submit a ticket</span>
     </button>
 </div>
-`;
+`;  
 Object.assign(lostSomething.style, {
     position: "absolute",
-    top: "140px",
-    left: "80px",
+    top: "170px",
+    left: "110px",
     display: "flex",
     flexDirection: "column",
 })
 document.querySelector(".header").appendChild(lostSomething);
-//search button pop-up
+
+//search function
 const searchContainer = document.createElement("div");
 searchContainer.innerHTML = `
-    <select id="search-category" style="padding: 6px; border-radius: 8px; border: 1px solid #ccc; cursor: pointer; font-size: 13px;">
-        <option value="All">All Categories</option>
-        <option value="Electronics">Electronics</option>
-        <option value="Clothing">Clothing</option>
-        <option value="School Supplies">School Supplies</option>
-        <option value="Wallet">Wallet</option>
-        <option value="ID">ID</option>
-        <option value="Other">Other</option>
-    </select>
-    <div style="position: relative; display: flex; align-items: center;">
-        <input type="text" id="search-input" placeholder="Filter list..." style="padding: 6px 30px 6px 10px; border-radius: 8px; border: 1px solid #ccc; width: 140px; font-size: 13px;">
-        <button id="clear-search" style="position: absolute; right: 8px; background: none; border: none; cursor: pointer; color: #888; font-weight: bold; display: none;">✕</button>
-    </div>
+<div style="position: relative; display: flex; align-items: center; border-radius: 40px; background-color: #ccc; height: 40px; width: 590px;">
+    <img src="searchIco.png" style="height: 100%; width: 8%; margin-left: 10px; z-index: 2000;">
+    <input type="text" id="search-input" placeholder="Filter list..." style="padding: 6px 30px 6px 10px; background: transparent; border: none; width: 590px; font-size: 20px; outline: none;">
+    <button id="clear-search" style="position: absolute; right: 8px; background: none; border: none; cursor: pointer; color: #888; font-weight: bold; display: none;">✕</button>
+</div>
+    <button id="all-categories" style="border-radius: 40px; background: transparent; color: #ffffff; border-color: #ffffff; border-width: 1px; padding: 6px; width: 50px; font-weight: bold; font-size: 15px;" value="All">All</button>
+    <button style="border-radius: 40px; background: transparent; color: #ffffff; border-color: #ffffff; border-width: 1px; padding: 6px; font-weight: bold; font-size: 15px;" value="Electronics">Electronics</button>
+    <button style="border-radius: 40px; background: transparent; color: #ffffff; border-color: #ffffff; border-width: 1px; padding: 6px; font-weight: bold; font-size: 15px;" value="Clothing">Clothing</button>
+    <button style="border-radius: 40px; background: transparent; color: #ffffff; border-color: #ffffff; border-width: 1px; padding: 6px; font-weight: bold; font-size: 15px;" value="School Supplies">School Supplies</button>
+    <button style="border-radius: 40px; background: transparent; color: #ffffff; border-color: #ffffff; border-width: 1px; padding: 6px; font-weight: bold; font-size: 15px;" value="Wallet">Wallet</button>
+    <button style="border-radius: 40px; background: transparent; color: #ffffff; border-color: #ffffff; border-width: 1px; padding: 6px; width: 50px; font-weight: bold; font-size: 15px;" value="ID">ID</button>
+    <button style="border-radius: 40px; background: transparent; color: #ffffff; border-color: #ffffff; border-width: 1px; padding: 6px; font-weight: bold; font-size: 15px;" value="Other">Other</button>
 `;
-
 
 Object.assign(searchContainer.style, {
     position: "absolute",
-    top: "-55px",
-    left: "85px",
-    display: "display",
-    opacity: "0",
-    transform: "translateX(-20px)",
-    transition: "all 0.1s ease-out",
-    pointerEvents: "none",
-    gap: "8px",
+    top: "15px",
+    left: "15px",
+    right: "15px",
+    display: "flex",
+    opacity: "0.9",
+    gap: "15px",
+    margin: "0",
     alignItems: "center",
-    backgroundColor: "#ffffff",
-    padding: "5px 10px",
-    borderRadius: "10px",
+    backgroundColor: "#2d4f81",
+    padding: "10px 10px",
+    borderRadius: "40px",
     boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
     zIndex: "1000",
-    border: "1px solid #ddd"
+    height: "55px",
+    boxSizing: "border-box",
+    overflow: "hidden",
 });
 document.querySelector(".item-list-container").appendChild(searchContainer);
 
+//button flavors
+function setActiveButton(activeBtn, allBtns) {
+    allBtns.forEach(btn => {
+        Object.assign(btn.style, {
+            backgroundColor: "transparent",
+            borderColor: "white",
+        });
+    });
+
+    Object.assign(activeBtn.style, {
+        backgroundColor: "black",
+        borderColor: "white",
+    });
+}
+
+const allBtns = searchContainer.querySelectorAll("button[value]");
+allBtns.forEach(btn => {
+    btn.addEventListener('click', () => setActiveButton(btn, allBtns))
+});
+
+//search function logic
+let currentCategory = "All";
+const searchInput = searchContainer.querySelector("#search-input");
+const clearBtn = searchContainer.querySelector("#clear-search");
+const categorySelect = searchContainer.querySelectorAll("button[value]");
+
+const filterAndHighlight = () => {
+    const query = searchInput.value.toLowerCase();
+    const items = document.querySelectorAll(".item-list li");
+   
+    clearBtn.style.display = query.length > 0 ? "block" : "none";
+
+
+    items.forEach(item => {
+        if (!item.dataset.original) item.dataset.original = item.innerHTML;
+        const itemCategory = item.dataset.category || "";
+       
+        // compute raw text excluding status badge
+        let rawText = item.innerText.toLowerCase();
+        const badge = item.querySelector('.status-badge');
+        if (badge) {
+            rawText = rawText.replace(badge.innerText.toLowerCase(), '');
+        }
+        const matchesCategory = currentCategory === "All" || itemCategory === currentCategory;
+        const matchesQuery = rawText.includes(query);
+
+        item.style.display = (matchesCategory && matchesQuery) ? "block" : "none";
+    });
+};
+categorySelect.forEach(btn => {
+    btn.addEventListener('click', () => {
+        currentCategory = btn.getAttribute("value");
+        setActiveButton(btn, categorySelect);
+        filterAndHighlight();
+    });
+});
+searchInput.oninput = filterAndHighlight;
+categorySelect.onchange = filterAndHighlight;
+clearBtn.onclick = () => {
+    searchInput.value = "";
+    filterAndHighlight();
+    searchInput.focus();
+};
+
+const allCategory = document.getElementById("all-categories");
+if (allCategory) {
+    setActiveButton(allCategory, allBtns);
+}
 
 //edit button
 const editButton = document.createElement("button");
@@ -113,7 +150,6 @@ Object.assign(editButton.style, {
 });
 document.querySelector(".item-list-container").appendChild(editButton);
 
-
 //button
 const lostButton = document.createElement("button");
 lostButton.innerText="+";
@@ -138,67 +174,6 @@ Object.assign(lostButton.style, {
 });
 document.querySelector(".item-list").appendChild(lostButton);
 
-//search button logic
-let isSearchOpen = false;
-const searchInput = searchContainer.querySelector("#search-input");
-const categorySelect = searchContainer.querySelector("#search-category");
-const clearBtn = searchContainer.querySelector("#clear-search");
-
-const filterAndHighlight = () => {
-    const category = categorySelect.value;
-    const query = searchInput.value.toLowerCase();
-    const items = document.querySelectorAll(".item-list li");
-   
-    clearBtn.style.display = query.length > 0 ? "block" : "none";
-
-
-    items.forEach(item => {
-        if (!item.dataset.original) item.dataset.original = item.innerHTML;
-       
-        // compute raw text excluding status badge
-        let rawText = item.innerText.toLowerCase();
-        const badge = item.querySelector('.status-badge');
-        if (badge) {
-            rawText = rawText.replace(badge.innerText.toLowerCase(), '');
-        }
-        const matchesCategory = category === "All" || rawText.includes(category.toLowerCase());
-        const matchesQuery = rawText.includes(query);
-
-        if (matchesCategory && matchesQuery) {
-            item.style.display = "block";
-            item.innerHTML = item.dataset.original;
-        } else {
-            item.style.display = "none";
-        }
-    });
-};
-
-
-searchButton.onclick = () => {
-    isSearchOpen = !isSearchOpen;
-
-    if (isSearchOpen) {
-        searchContainer.style.opacity = "1";
-        searchContainer.style.transform = "translateX(0)";
-        searchContainer.style.pointerEvents = "auto";
-    }
-    else {
-        searchContainer.style.opacity = "0";
-        searchContainer.style.transform = "translateX(-20px)";
-        searchContainer.style.pointerEvents = "none";
-    }
-};
-
-
-searchInput.oninput = filterAndHighlight;
-categorySelect.onchange = filterAndHighlight;
-clearBtn.onclick = () => {
-    searchInput.value = "";
-    filterAndHighlight();
-    searchInput.focus();
-};
-
-
 //for edit button
 let isEditing=false;
 editButton.onclick = () => {
@@ -222,7 +197,6 @@ editButton.onclick = () => {
         deleteItem="null";
     }
 };
-
 
 //popup
 const popupLost = document.createElement("div");
@@ -255,7 +229,6 @@ popupLost.innerHTML = `
     </div>
 </div>`;
 
-
 Object.assign(popupLost.style, {
     position: "fixed",
     top: "0",
@@ -269,9 +242,8 @@ Object.assign(popupLost.style, {
     zIndex: "2000"
 });
 
-
 document.body.appendChild(popupLost);
-lostButton.onclick = () =>  {
+lostButton.onclick = () => {
     popupLost.style.display = "flex";
     document.body.style.overflow = "hidden";
 };
@@ -343,6 +315,7 @@ popupLost.querySelector("#submit-lost").onclick = event => {
     const newItem = document.createElement("li");
     const entryId = Date.now().toString();
     newItem.dataset.id = entryId;
+    newItem.dataset.category = typeInput.value;
     Object.assign(newItem.style, {
         padding: "5px 0",
         position: "relative",
@@ -470,78 +443,6 @@ popupLost.querySelector("#submit-lost").onclick = event => {
     document.body.style.overflow = "auto";
 };
 
-//three bar dropdown
-const dropdown = document.createElement("button");
-dropdown.innerText="☰";
-Object.assign(dropdown.style, {
-    padding: "6px 18px",
-    fontWeight: "bold",
-    backgroundColor: "#000",
-    color: "#fff",
-    cursor: "pointer",
-    borderWidth: "0px",
-    fontSize: "30px",
-    display: "none", //hide muna natin toh
-    position: "absolute",
-    alignContent: "center",
-    right: "40px",
-});
-document.querySelector(".header").appendChild(dropdown);
-
-//dropdown popup
-const dropdownPopup = document.createElement("div");
-dropdownPopup.innerHTML = `
-<div style="display: flex; flex-direction: column; gap: 0px; width: 100%;">
-    <div class="header-buttons">
-        <img class="button-icon" src="Ticket.png">
-    </div>
-    <div class="button-line"></div>
-    <div class="header-buttons">
-        <img class="button-icon" src="Login.png">
-        <button class="login-btn" id="login-button">Log In</button>
-    </div>
-</div>`;
-Object.assign(dropdownPopup.style, {
-    borderWidth: "0px",
-    borderRadius: "10px",
-    padding: "10px 10px",
-    backgroundColor: "black",
-    top: "110%",
-    right: "50px",
-    color: "#fff",
-    opacity: "0",
-    transform: "translateY(-10px)",
-    transition: "all 0.1s ease-out",
-    position: "absolute",
-    zIndex: "2000",
-    PointerEvents: "none",
-    display: "flex"
-});
-document.querySelector(".header").appendChild(dropdownPopup);
-
-let isDown = false;
-dropdown.onclick = event => {
-    isDown=!isDown;
-
-    if (isDown) {
-        dropdownPopup.style.opacity = "1";
-        dropdownPopup.style.transform = "translateY(0)";
-        dropdownPopup.style.pointerEvents = "auto";
-    }
-    else {
-        dropdownPopup.style.opacity = "0";
-        dropdownPopup.style.transform = "translateY(-10px)";
-        dropdownPopup.style.pointerEvents = "none";
-    }
-};
-window.addEventListener('click', event => {
-    if (isDown && event.target !== dropdown && !dropdownPopup.contains(event.target) && !loginPage.contains(event.target)) {
-        isDown = false;
-        dropdownPopup.style.opacity = "0";
-        dropdownPopup.style.transform = "translateY(-10px)";
-        dropdownPopup.style.pointerEvents = "none";
-    }
-});
 window.addEventListener('keydown', event => {
     if (event.key === "Enter") {
         if (popupLost.style.display === "flex") {
@@ -564,22 +465,6 @@ window.addEventListener('keydown', event => {
             }
             else {
                 submitBtn.click();
-            }
-        }
-
-        if (loginPage.style.display === "flex") {
-            const login = document.getElementById("submit-login");
-
-            if (document.activeElement === adminUser) {
-                event.preventDefault();
-                adminPass.focus();
-            }
-            else if (document.activeElement === adminPass) {
-                event.preventDefault();
-                login.focus();
-            }
-            else {
-                login.click();
             }
         }
 
@@ -611,11 +496,6 @@ window.addEventListener('keydown', event => {
             popupLost.style.display = "none";
             document.body.style.overflow = "auto";
         }
-        if (loginPage.style.display === "flex") {
-            loginPage.style.display = "none";
-            document.body.style.overflow = "auto";
-            document.getElementById("login-query").reset();
-        }
         if (ticketPage.style.display === "flex") {
             ticketPage.style.display = "none";
             document.body.style.overflow = "auto";
@@ -627,102 +507,7 @@ window.addEventListener('keydown', event => {
     }
 });
 
-//flavor we might delete this
-const wholeButton = dropdownPopup.querySelectorAll(".header-buttons");
-wholeButton.forEach(container => {
-    const btn = container.querySelector("button");
-    const icon = container.querySelector(".button-icon");
-
-    container.onmouseenter = () => {
-        if (icon) icon.style.filter = "brightness(0) invert(1) brightness(10)";
-        if (icon) icon.style.transition = "filter 0.1s ease";
-        btn.style.backgroundColor = "#0056b3";
-        btn.style.color = "white";
-    };
-
-    container.onmouseleave = () => {
-        if (icon) icon.style.filter = "none";
-        btn.style.backgroundColor = "#000";
-        btn.style.color = "rgb(167, 167, 167)"
-    };
-});
-
-//for login button
-const logAdmin = document.getElementById("login-button");
-const loginPage = document.createElement("div");
-loginPage.innerHTML = `
-<div style="position: fixed; border-radius: 20px; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; height: 70%; display: flex; justify-content: center; align-items: center; z-index: 2000; background-color: white;">
-    <div style="position: absolute; background-color: #0668c0; color: white; justify-content: center; display: flex; align-items: center; font-weight: bold; font-size: 26px; width: 97%; height: 5%; top: 10px; left: 50%; transform: translateX(-50%); padding: 10px 0px; border-radius: 20px; border-width: 10px;">LOG IN AS ADMIN
-    <button id="close-login" style="position: absolute; top: 45%; transform: translateY(-49%); left: 15px; background: none; border: none; cursor: pointer; font-weight: bold; font-size: 24px; color: white;">←</button></div>
-    <form id="login-query" style="margin-top: 20px; align-items: center; display: flex; flex-direction: column; gap: 20px;">
-        <div style="display: flex; align-items: center; justify-items: flex-end: width: 100%; gap: 10px;">
-            <label for="admin-user">USERNAME:</label>
-            <input type="text" style="background-color: #d9d9d9; border-radius: 20px; border-width: 0px; height: 25px; width: 180px; padding: 3px 10px; align-items: center; justify-content: center;" id="admin-username" required>
-        </div>
-        <div style="display: flex; align-items: center; justify-items: flex-end: width: 100%; gap: 10px;">
-            <label for="admin-password">PASSWORD:</label>
-            <input type="password" style="background-color: #d9d9d9; border-radius: 20px; border-width: 0px; height: 25px; width: 180px; padding: 3px 10px; align-items: center; justify-content: center;" id="admin-password" required>
-        </div>
-        <button type="submit" id="submit-login" style="background-color: #0668c0; border-radius: 20px; height: 30px; width: 100px; padding: 3px 10px; align-items: center; justify-content: center; color: white; border-color: #0668c0; cursor: pointer; transition: background 0.2s ease;">LOG IN</button>
-    </form>
-</div>`;
-Object.assign(loginPage.style, {
-    position: "fixed",
-    top: "0",
-    left: "0",
-    width: "100vw",
-    height: "100vh",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    display: "none",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: "2000"
-});
-document.body.appendChild(loginPage);
-const loginOut = document.getElementById("close-login");
-const adminUser = document.getElementById("admin-username");
-const adminPass = document.getElementById("admin-password");
-
-//show login page
-logAdmin.onclick = event => {
-    loginPage.style.display = "flex";
-    document.body.style.overflow = "hidden";
-};
-
-//close login page
-loginOut.onclick = () => {
-    loginPage.style.display = "none";
-    document.body.style.overflow = "auto";
-};
-
-loginOut.onmouseenter = () => {
-    loginOut.innerText = "Close";
-    loginOut.style.fontSize = "20px";
-};
-loginOut.onmouseleave = () => {
-    loginOut.innerText = "←";
-    loginOut.style.fontSize = "24px";
-};
-
-loginPage.querySelector("#submit-login").onclick = event => {
-    event.preventDefault();
-
-    if (!adminUser.checkValidity()) {
-        adminUser.reportValidity();
-        return;
-    }
-    if (!adminPass.checkValidity()) {
-        adminPass.reportValidity();
-        return;
-    }
-
-    document.getElementById("login-query").reset();
-    loginPage.style.display = "none";
-    document.body.style.overflow = "auto";
-    dropdownPopup.style.display = "none";
-};
 //for submit ticket
-const submitTicket = document.getElementById("ticket-button");
 const ticketPage = document.createElement("div");
 ticketPage.innerHTML = `
 <div style="position: fixed; border-radius: 20px; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; height: 70%; display: flex; flex-direction: column; background-color: white; z-index: 2000; overflow: hidden; gap: 15px;">
@@ -805,6 +590,7 @@ const ticketOut = document.getElementById("close-ticket");
 const lostOut = document.getElementById("close-lost");
 
 //show submit ticket page
+const submitTicket = document.getElementById("ticket-button");
 submitTicket.onclick = () => {
     ticketPage.style.display = "flex";
     document.body.style.overflow = "hidden";
@@ -953,103 +739,3 @@ ticketPage.querySelector("#submit-ticket").onclick = event => {
     ticketPage.style.display = "none";
     document.body.style.overflow = "auto";
 };
-
-
-document.getElementById("back-to-logbook").onclick = () => {
-    ticketInboxContainer.style.display = "none";
-    logbookContainer.style.display = "none";
-    itemListContainerMain.style.display = "block";
-};
-
-// back from logbook
-if (document.getElementById("back-from-logbook")) {
-    document.getElementById("back-from-logbook").onclick = () => {
-        logbookContainer.style.display = "none";
-        itemListContainerMain.style.display = "block";
-    };
-}
-
-// Sidebar shiiiii
-const sidebarTrigger = document.createElement("div");
-Object.assign(sidebarTrigger.style, {
-    position: "fixed",
-    display: "flex",
-    left: "0",
-    top: "0",
-    width: "10px",
-    height: "100%",
-    backgroundColor: "transparent",
-    zIndex: "1999"
-});
-document.body.appendChild(sidebarTrigger);
-
-const sidebar = document.createElement("div");
-sidebar.innerHTML = `
-    <div style="font-weight: bold; font-size: 18px; margin-bottom: 20px; color: #333;">Admin Pages</div>
-    <button id="sidebar-logbook" style="width: 100%; padding: 10px; margin-bottom: 10px; background-color: #0668c0; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px;">Logbook</button>
-    <button id="sidebar-ticket" style="width: 100%; padding: 10px; margin-bottom: 10px; background-color: #0668c0; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px;">Ticket inbox</button>
-    <button id="sidebar-catalogue" style="width: 100%; padding: 10px; margin-bottom: 10px; background-color: #0668c0; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px;">Item Catalogue</button>
-`;
-sidebar.style.position = "fixed";
-sidebar.style.left = "-200px";
-sidebar.style.top = "0";
-sidebar.style.width = "200px";
-sidebar.style.height = "100%";
-sidebar.style.backgroundColor = "lightgray";
-sidebar.style.transition = "left 0.3s";
-sidebar.style.zIndex = "1999";
-sidebar.style.padding = "20px";
-sidebar.style.boxSizing = "border-box";
-document.body.appendChild(sidebar);
-
-let sidebarTimeout;
-sidebarTrigger.addEventListener("mouseenter", () => {
-    clearTimeout(sidebarTimeout);
-    sidebar.style.left = "0";
-});
-sidebar.addEventListener("mouseenter", () => {
-    clearTimeout(sidebarTimeout);
-});
-sidebarTrigger.addEventListener("mouseleave", () => {
-    sidebarTimeout = setTimeout(() => {
-        sidebar.style.left = "-200px";
-    }, 300);
-});
-sidebar.addEventListener("mouseleave", () => {
-    sidebarTimeout = setTimeout(() => {
-        sidebar.style.left = "-200px";
-    }, 300);
-});
-
-// Sidebar buttons BABEYYYYY
-// Logbook
-const logbookBtn = document.getElementById('sidebar-logbook');
-if (logbookBtn) {
-    logbookBtn.onclick = () => {
-        itemListContainerMain.style.display = "none";
-        ticketInboxContainer.style.display = "none";
-        logbookContainer.style.display = "block";
-        sidebar.style.left = "-200px";
-    };
-}
-
-// Ticket Inbox
-const ticketBtn = document.getElementById('sidebar-ticket');
-if (ticketBtn) {
-    ticketBtn.onclick = () => {
-        itemListContainerMain.style.display = "none";
-        ticketInboxContainer.style.display = "block";
-        sidebar.style.left = "-200px";
-    };
-}
-
-// Item catalogue
-const catalogueBtn = document.getElementById('sidebar-catalogue');
-if (catalogueBtn) {
-    catalogueBtn.onclick = () => {
-        ticketInboxContainer.style.display = "none";
-        logbookContainer.style.display = "none";
-        itemListContainerMain.style.display = "block";
-        sidebar.style.left = "-200px";
-    };
-}
