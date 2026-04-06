@@ -1,3 +1,12 @@
+//global entry counter
+let itemCounter = parseInt(localStorage.getItem('LibraryItemCounter')) || 0;
+
+function getNextId() {
+    itemCounter++;
+    localStorage.setItem('libraryItemCounter', itemCounter);
+    return itemCounter.toString().padStart(4, '0');
+}
+
 //submit a ticket div
 const lostSomething = document.createElement("div");
 lostSomething.innerHTML = `
@@ -37,12 +46,12 @@ searchContainer.innerHTML = `
 `;
 
 Object.assign(searchContainer.style, {
-    position: "absolute",
-    top: "15px",
+    position: "sticky",
+    top: "0",
     left: "15px",
     right: "15px",
     display: "flex",
-    opacity: "0.9",
+    opacity: "0.85",
     gap: "15px",
     margin: "0",
     alignItems: "center",
@@ -50,12 +59,13 @@ Object.assign(searchContainer.style, {
     padding: "10px 10px",
     borderRadius: "40px",
     boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-    zIndex: "1000",
+    zIndex: "3000",
     height: "55px",
     boxSizing: "border-box",
     overflow: "hidden",
+    transition: "opacity 0.1s ease",
 });
-document.querySelector(".item-list-container").appendChild(searchContainer);
+document.querySelector(".item-list-container").prepend(searchContainer);
 
 //button flavors
 function setActiveButton(activeBtn, allBtns) {
@@ -114,7 +124,6 @@ categorySelect.forEach(btn => {
     });
 });
 searchInput.oninput = filterAndHighlight;
-categorySelect.onchange = filterAndHighlight;
 clearBtn.onclick = () => {
     searchInput.value = "";
     filterAndHighlight();
@@ -126,31 +135,33 @@ if (allCategory) {
     setActiveButton(allCategory, allBtns);
 }
 
-//edit button
-const editButton = document.createElement("button");
-editButton.innerText="Edit";
-Object.assign(editButton.style, {
-    padding:"8px 20px",
-    color:"#000000",
-    backgroundColor:"#828282",
-    cursor:"pointer",
-    borderWidth:"2px",
-    borderStyle:"solid",
-    fontSize:"15px",
-    fontWeight:"normal",
-    display:"flex",
-    alignContent:"center",
-    textAlign:"center",
-    position:"absolute",
-    top:"-40px",
-    right:"0px",
-    margin:"0",
-    borderRadius:"8px",
-    boxShadow:"0 4px 8px rgba(0, 0, 0, 0.1)",
-});
-document.querySelector(".item-list-container").appendChild(editButton);
+//search bar flavor
+const searchOpacity = () => {
+    setTimeout(() => {
+        const isHovered = searchContainer.matches(':hover');
+        const isFocused = document.activeElement === searchInput;
+        const isButtonFocused = Array.from(allBtns).includes(document.activeElement);
 
-//button
+        if (isHovered || isFocused || isButtonFocused) {
+            searchContainer.style.opacity = "0.85";
+        }
+        else {
+            searchContainer.style.opacity = "0.4";
+        }
+    }, 50);
+
+    allBtns.forEach(btn => {
+        btn.addEventListener('focus', searchOpacity);
+        btn.addEventListener('blur', searchOpacity);
+        btn.addEventListener('click', searchOpacity);
+    });
+};
+searchContainer.onmouseenter = searchOpacity;
+searchContainer.onmouseleave = searchOpacity;
+searchInput.onfocus = searchOpacity;
+searchInput.onblur = searchOpacity;
+
+//testing add button
 const lostButton = document.createElement("button");
 lostButton.innerText="+";
 Object.assign(lostButton.style, {
@@ -163,40 +174,17 @@ Object.assign(lostButton.style, {
     borderStyle:"solid",
     fontSize:"24px",
     fontWeight:"bold",
-    display:"none",
+    display:"flex",
     alignContent:"center",
     textAlign:"center",
-    position:"absolute",
+    position:"relative",
     top:"-70px",
     right:"-5px",
     margin:"0",
     boxShadow:"0 4px 8px rgba(0, 0, 0, 0.1)",
 });
-document.querySelector(".item-list").appendChild(lostButton);
-
-//for edit button
-let isEditing=false;
-editButton.onclick = () => {
-    const allDeleteButtons = document.querySelectorAll(".deleteButton");
-    isEditing=!isEditing;
-    if (isEditing) {
-        editButton.innerText="Done";
-        editButton.style.backgroundColor="#acfc79";
-        editButton.style.borderWidth="0px";
-        lostButton.style.display="flex";
-        allDeleteButtons.forEach(btn => btn.style.display = "block");
-        deleteItem="null";
-    }
-    else {
-        editButton.innerText="Edit";
-        editButton.style.color="#000000";
-        editButton.style.backgroundColor="#828282";
-        editButton.style.borderWidth="2px";
-        lostButton.style.display="none";
-        allDeleteButtons.forEach(btn => btn.style.display = "none");
-        deleteItem="null";
-    }
-};
+const beforeContainer = document.querySelector(".item-list-container");
+beforeContainer.parentNode.insertBefore(lostButton, beforeContainer);
 
 //popup
 const popupLost = document.createElement("div");
@@ -254,191 +242,50 @@ popupLost.querySelector("#close-lost").onclick = () => {
     document.body.style.overflow = "auto";
 };
 
-const warning = document.createElement("div");
-document.body.appendChild(warning);
-let deleteItem = null;
-
 popupLost.querySelector("#submit-lost").onclick = event => {
     event.preventDefault();
-
-
-    const descInput = document.getElementById("item-name");
+    const titleInput = document.getElementById("item-name")
+    const descInput = document.getElementById("item-desc");
     const nameInput = document.getElementById("person-name");
     const dateInput = document.getElementById("item-date");
     const typeInput = document.getElementById("item-type");
    
-    if (!descInput.checkValidity() || !dateInput.checkValidity() || !typeInput.checkValidity() || !nameInput.checkValidity()) {
-        descInput.reportValidity() || dateInput.reportValidity() || typeInput.reportValidity() || nameInput.reportValidity();
+    if (!titleInput.checkValidity() || !descInput.checkValidity() || !dateInput.checkValidity() || !typeInput.checkValidity() || !nameInput.checkValidity()) {
+        titleInput.checkValidity() || descInput.reportValidity() || dateInput.reportValidity() || typeInput.reportValidity() || nameInput.reportValidity();
         return;
     }
 
-    //delete warning
-    warning.innerHTML = `
-    <div style="padding: 20px 40px; text-align: center; align-content: center; justify-content: center; position: fixed; display: flex; flex-direction: column; border-radius: 20px; background-color: white; color: black; font-weight: bold; font-size: 24px; top: 50%; left: 50%; transform: translate(-50%, -50%); height: auto; min-height: 30%; width: 80%; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);">Deleting this item would also remove it from the logbook.<br> Do you wish to proceed?
-        <div style="display: flex; flex-direction: row; gap: 50px; margin-top: 30px; justify-content: center; position: relative; background: none; padding: 10px 20px; width: 100%">
-            <button id="close-delete" style="cursor: pointer; display: flex; padding: 8px 20px; color: black; background-color: gray; font-size: 20px; border: none; border-radius: 8px;">Cancel</button>
-            <button id="proceed-delete" style="cursor: pointer; display: flex; padding: 8px 20px; color: white; background-color: blue; font-size: 20px; border: none; border-radius: 8px;">Proceed</button>
-            </div>
-    </div>`;
-    Object.assign(warning.style, {
-        position: "fixed",
-        top: "0",
-        left: "0",
-        width: "100vw",
-        height: "100vh",
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-        display: "none",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: "2000"
-    });
-    warning.querySelector("#close-delete").onclick = event => {
-        warning.style.display = "none";
-        document.body.style.overflow = "auto";
-        deleteItem = null;
-    };
-    warning.querySelector("#proceed-delete").onclick = event => {
-        if (deleteItem) {
-            const id = deleteItem.dataset.id;
-            deleteItem.remove();
-            // also remove from logbook if present
-            if (id) {
-                const logEntry = document.querySelector(`#logbook-list li[data-id="${id}"]`);
-                if (logEntry) logEntry.remove();
-            }
-            deleteItem = null;
-        }
-        warning.style.display = "none";
-        document.body.style.overflow = "auto";
-
-    };
-
     // item logging with status
     const newItem = document.createElement("li");
-    const entryId = Date.now().toString();
+    const entryId = getNextId();
     newItem.dataset.id = entryId;
     newItem.dataset.category = typeInput.value;
     Object.assign(newItem.style, {
-        padding: "5px 0",
+        padding: "5px 5px",
         position: "relative",
         listStyle: "none",
     });
     newItem.innerHTML = `
-        <strong>${descInput.value}</strong> - <small>${dateInput.value}, ${typeInput.value}</small>
-        <span class="status-badge" style="margin-left:10px; padding:2px 8px; border-radius:4px; background:green; color:#fff; cursor:pointer; font-size:12px; position:relative;">to receive</span>
-        <ul class="status-dropdown" style="display:none; position:absolute; top:120%; left:0; background:#fff; border:1px solid #ccc; list-style:none; padding:0; margin:0; z-index:1000; min-width:80px;">
-            <li style="padding:5px; cursor:pointer;">to receive</li>
-            <li style="padding:5px; cursor:pointer;">received</li>
-        </ul>
-        <button class="deleteButton" style="cursor: pointer; right: 5px; top: 50%; transform: translateY(-50%); padding: 2px 2px; position: absolute; display: block; background-color: red; color: white; border-width: 3px; border: red; border-radius: 8px; height: 27px; width: 30px;">
-            <img class="delete-icon" src="delete icon.png" style="object-fit: contain; height: 100%; width: 100%;"></button>
+        <div style="display: flex; flex-direction: row; height: 80px; width: 100%; gap: 0;">
+            <div style="width: 50%; height: 100%; margin-bottom: 8px; padding: 3px;">
+                <span style="font-weight: 900; font-size: 30px;">${entryId.slice(-4)}</span>
+            </div>
+            <div style="width: 75%; height: 100%; margin-bottom: 8px; padding: 3px; align-items: center; margin-top: 10px;">
+                <span style="font-weight: bold; font-size: 20px; text-align: right; margin-right: 15px;">${titleInput.value}</span>
+            </div>
+        </div>
+        <div style="height: 50px; font-size: 16px; color: #b0b0b0; line-height: 1.4; text-align: center; padding: 3px; width: 100%;">
+            ${descInput.value || "No additional details"}
+        </div>
     `;
-    // status logic
-    const badge = newItem.querySelector('.status-badge');
-    const dropdown = newItem.querySelector('.status-dropdown');
-    badge.onclick = e => {
-        e.stopPropagation();
-        dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
-        dropdown.style.flexDirection = 'column';
-    };
-    dropdown.querySelectorAll('li').forEach(li => {
-        li.onclick = e => {
-            const val = li.textContent;
-            if (val === 'received') {
-                // show warning for status change to received
-                const statusWarning = document.createElement("div");
-                statusWarning.innerHTML = `
-                    <div style="padding: 20px 40px; text-align: center; align-content: center; justify-content: center; position: fixed; display: flex; flex-direction: column; border-radius: 20px; background-color: white; color: black; font-weight: bold; font-size: 24px; top: 50%; left: 50%; transform: translate(-50%, -50%); height: auto; min-height: 30%; width: 80%; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);">
-                        Changing to this status removes it from the catalogue, but will remain logged in the logbook.<br>
-                        <div style="display: flex; flex-direction: row; gap: 50px; margin-top: 30px; justify-content: center; position: relative; background: none; padding: 10px 20px; width: 100%">
-                            <button id="cancel-status" style="cursor: pointer; display: flex; padding: 8px 20px; color: black; background-color: gray; font-size: 20px; border: none; border-radius: 8px;">Cancel</button>
-                            <button id="confirm-status" style="cursor: pointer; display: flex; padding: 8px 20px; color: white; background-color: blue; font-size: 20px; border: none; border-radius: 8px;">I understand</button>
-                        </div>
-                    </div>
-                `;
-                Object.assign(statusWarning.style, {
-                    position: "fixed",
-                    top: "0",
-                    left: "0",
-                    width: "100vw",
-                    height: "100vh",
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    zIndex: "3000"
-                });
-                document.body.appendChild(statusWarning);
-                document.body.style.overflow = "hidden";
-
-                statusWarning.querySelector("#cancel-status").onclick = () => {
-                    statusWarning.remove();
-                    document.body.style.overflow = "auto";
-                };
-                statusWarning.querySelector("#confirm-status").onclick = () => {
-                    // apply status change
-                    badge.textContent = val;
-                    badge.style.background = 'blue';
-                    // sync to logbook
-                    const id = newItem.dataset.id;
-                    if (id) {
-                        const logEntry = document.querySelector(`#logbook-list li[data-id="${id}"]`);
-                        if (logEntry) {
-                            const logBadge = logEntry.querySelector('.status-badge');
-                            if (logBadge) {
-                                logBadge.textContent = val;
-                                logBadge.style.background = 'blue';
-                            }
-                        }
-                    }
-                    // remove from catalogue
-                    newItem.remove();
-                    statusWarning.remove();
-                    document.body.style.overflow = "auto";
-                };
-            } else {
-                // normal status change for 'to receive'
-                badge.textContent = val;
-                badge.style.background = 'green';
-                // sync to logbook
-                const id = newItem.dataset.id;
-                if (id) {
-                    const logEntry = document.querySelector(`#logbook-list li[data-id="${id}"]`);
-                    if (logEntry) {
-                        const logBadge = logEntry.querySelector('.status-badge');
-                        if (logBadge) {
-                            logBadge.textContent = val;
-                            logBadge.style.background = 'green';
-                        }
-                    }
-                }
-            }
-            dropdown.style.display = 'none';
-        };
-    });
+    
     // close dropdown when clicking outside
     document.addEventListener('click', () => {
         dropdown.style.display = 'none';
     });
-    newItem.querySelector(".deleteButton").onclick = event => {
-        deleteItem = newItem;
-        warning.style.display = "flex";
-        document.body.style.overflow = "hidden";
-    };
 
     const itemList = document.querySelector(".item-list");
     itemList.appendChild(newItem);
-
-    // also mirror to logbook list
-    const logbookList = document.getElementById('logbook-list');
-    if (logbookList) {
-        const logItem = newItem.cloneNode(true);
-        // remove delete button from logbook entry
-        const del = logItem.querySelector('.deleteButton');
-        if (del) del.remove();
-        logItem.dataset.id = entryId;
-        logbookList.appendChild(logItem);
-    }
 
     document.getElementById("lost-query").reset();
     popupLost.style.display = "none";
