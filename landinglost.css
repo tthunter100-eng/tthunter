@@ -1,0 +1,258 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: black;
+    position: relative;
+    min-height: 100vh;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: -30px;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0.8;
+    z-index: -1;
+    transform: scale(1.1);
+    background-image: url('LP-BG_BLANK.png');
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.logo-background {
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.school-logo {
+    width: 90px;
+    height: auto;
+}
+
+.header-titles {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.header-titles h1 {
+    font-size: 30px;
+    margin: 0;
+    font-weight: normal;
+    line-height: 1.1;
+    text-shadow: #333 1px 1px 2px, #333 0px 0px 2px;
+}
+
+.header-titles h2 {
+    font-size: 18px;
+    font-weight: lighter;
+    margin: 0;
+    line-height: 1.1;
+}
+
+.button-line {
+    border-top: 2px solid rgb(167, 167, 167);
+    margin: 8px 0;
+}
+
+
+.button-icon {
+    position: absolute;
+    left: 0px;
+    width: 40px;
+    top: 0px;
+    pointer-events: none;
+    transition: filter 0.2s ease;
+}
+
+
+.header-buttons {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+
+
+.header-buttons button {
+    flex-grow: 1;
+    padding-left: 45px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: left;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, color 0.1s ease;
+}
+
+
+
+
+@property --grad-color-1 {
+    syntax: '<color>';
+    initial-value: black;
+    inherits: false;
+}
+
+
+
+
+@property --grad-color-2 {
+    syntax: '<color>';
+    initial-value: blue;
+    inherits: false;
+}
+
+
+
+
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.header-section {
+    color: #fff;
+    font-size: 20px;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.divs-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.left-div {
+    background-color: transparent;
+    width: 50%;
+    height: 400px;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    margin-top: -60px;
+}
+
+.left-div h1 {
+    font-size: 55px;
+    margin: 0 0 10px 0;
+    text-align: center;
+    font-weight: semibold;
+}
+
+.left-div p {
+    font-size: 21px;
+    margin: 30px 20px;
+    text-align: center;
+    white-space: pre-line;
+    font-weight: normal;
+    line-height: 25px;
+}
+
+.blue-button {
+    background-color: #385BE5;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: semibold;
+    text-align: center;
+    text-decoration: none;
+    width: 289px;
+    height: 43px;
+}
+
+.right-div {
+    background-color: white;
+    width: 50%;
+    height: 400px;
+    margin-left: 10px;
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+    
+}
+
+.admin-image {
+    height: 33.33%;
+    width: 100%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.right-div h2 {
+    font-size: 1.2em;
+    margin: 10px 0;
+    text-align: center;
+}
+
+.admin-input {
+    background-color: lightgray;
+    color: black;
+    border: none;
+    padding: 10px;
+    margin: 5px 0;
+    width: 80%;
+    font-size: 1em;
+    border-radius: 5px;
+}
+
+.login-button {
+    background-color: #385BE5;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: semibold;
+    text-align: center;
+    height: 40px;
+    width: 300px;
+    margin-top: 10px;
+}
+
